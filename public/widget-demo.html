@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Widget demo — Random AI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Widget Demo</h1>
+    <p>This page demonstrates the embeddable chat widget. Use the admin page to configure the widget text.</p>
+    <p><a href="admin.html" class="btn ghost">Open admin</a></p>
+  </div>
+
+  <script src="widget-embed.js"></script>
+  <script>
+    // Example: override default settings on init
+    window.RandomAIWidget && window.RandomAIWidget.init({title:'Support', placeholder:'Type a question...', welcome:'Hello! I can help with product questions.'});
+  </script>
+</body>
+</html>

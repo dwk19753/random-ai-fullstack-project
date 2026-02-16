@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Widget Admin — Random AI</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Widget Admin</h1>
+    <form id="cfg-form">
+      <label>Title<br><input name="title" placeholder="Support"></label>
+      <label>Welcome message<br><input name="welcome" placeholder="Hi there!"></label>
+      <label>Input placeholder<br><input name="placeholder" placeholder="Ask something..."></label>
+      <div style="margin-top:12px"><button type="submit" class="btn primary">Save</button> <button type="button" id="open-demo" class="btn ghost">Open Demo</button></div>
+    </form>
+    <div id="saved" style="margin-top:12px;color:var(--accent)"></div>
+  </div>
+  <script src="admin.js"></script>
+</body>
+</html>
