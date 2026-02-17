@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import path from 'path';
@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 // Serve static frontend from the public folder
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', async (req: Request, res: Response) => {
   const { message } = req.body as { message?: string };
   if (!message) return res.status(400).json({ error: 'message required' });
 
@@ -42,8 +42,9 @@ app.post('/api/chat', async (req, res) => {
 
       const reply = resp.data?.choices?.[0]?.message?.content || 'No reply';
       return res.json({ reply });
-    } catch (err) {
-      console.error('OpenAI error', err?.response?.data || err);
+    } catch (err: any) {
+      // axios error may have response.data
+      console.error('OpenAI error', err?.response?.data ?? err?.message ?? err);
       return res.status(500).json({ error: 'model error' });
     }
   }
