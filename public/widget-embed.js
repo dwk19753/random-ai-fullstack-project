@@ -28,7 +28,7 @@
 
     bubble.addEventListener('click', ()=>{openPanel();});
     close.addEventListener('click', ()=>{closePanel();});
-    form.addEventListener('submit',(e)=>{e.preventDefault();const v=input.value.trim();if(!v) return;appendMessage('user',v);input.value='';fakeReply(v)});
+    form.addEventListener('submit',(e)=>{e.preventDefault();const v=input.value.trim();if(!v) return;appendMessage('user',v);input.value='';sendToServer(v)});
   }
 
   function appendMessage(who, text){
@@ -40,10 +40,30 @@
   }
 
   function fakeReply(userText){
-    // Simple canned behavior: echo + configured welcome for first message
+    // Deprecated: use server-backed replies
     const cfg = loadConfig();
     setTimeout(()=>{appendMessage('bot', cfg.welcome);}, 600);
     setTimeout(()=>{appendMessage('bot','Echo: '+userText);}, 1200);
+  }
+
+  async function sendToServer(userText){
+    const cfg = loadConfig();
+    // show a typing indicator
+    appendMessage('bot','...');
+    try{
+      const res = await fetch('/api/chat', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:userText})});
+      const data = await res.json();
+      // remove the last typing indicator
+      const body = document.getElementById('ra-body');
+      if(body && body.lastChild && body.lastChild.textContent === '...') body.removeChild(body.lastChild);
+      if(data && data.reply) appendMessage('bot', data.reply);
+      else appendMessage('bot','Sorry, something went wrong.');
+    }catch(e){
+      const body = document.getElementById('ra-body');
+      if(body && body.lastChild && body.lastChild.textContent === '...') body.removeChild(body.lastChild);
+      appendMessage('bot','Network error');
+      console.error(e);
+    }
   }
 
   function openPanel(){
