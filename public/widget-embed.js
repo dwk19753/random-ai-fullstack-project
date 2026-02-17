@@ -51,7 +51,10 @@
     // show a typing indicator
     appendMessage('bot','...');
     try{
-      const res = await fetch('/api/chat', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:userText})});
+      const token = localStorage.getItem('random-ai-widget-token');
+      const headers = {'Content-Type':'application/json'};
+      if(token) headers['Authorization'] = 'Bearer ' + token;
+      const res = await fetch('/api/chat', {method:'POST',headers,body:JSON.stringify({message:userText})});
       const data = await res.json();
       // remove the last typing indicator
       const body = document.getElementById('ra-body');
