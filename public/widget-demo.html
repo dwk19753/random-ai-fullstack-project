@@ -15,8 +15,8 @@
 
   <script src="widget-embed.js"></script>
   <script>
-    // Example: override default settings on init
-    window.RandomAIWidget && window.RandomAIWidget.init({title:'Support', placeholder:'Type a question...', welcome:'Hello! I can help with product questions.'});
+    // Use saved admin settings if present; init without hardcoded overrides
+    window.RandomAIWidget && window.RandomAIWidget.init();
   </script>
 </body>
 </html>

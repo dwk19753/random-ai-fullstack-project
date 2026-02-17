@@ -10,5 +10,9 @@
     if(form.token && form.token.value){ localStorage.setItem('random-ai-widget-token', form.token.value) } else { localStorage.removeItem('random-ai-widget-token') }
     if(window.RandomAIWidget && window.RandomAIWidget.init) window.RandomAIWidget.init(cfg);
   });
-  document.getElementById('open-demo').addEventListener('click', ()=>{window.open('widget-demo.html','_blank')});
+  const bc = new BroadcastChannel ? new BroadcastChannel('random-ai-widget') : null;
+  document.getElementById('open-demo').addEventListener('click', ()=>{ window.open(window.location.origin + '/widget-demo.html','_blank') });
+  // Broadcast saved config/token to other tabs on save
+  const origSave = save;
+  save = function(cfg){ origSave(cfg); if(bc){ try{ bc.postMessage({cfg, token: localStorage.getItem('random-ai-widget-token')}); }catch(e){} } }
 })();

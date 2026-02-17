@@ -83,14 +83,55 @@
       const stored = loadConfig();
       const merged = Object.assign({}, stored, opts);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      console.log('RandomAIWidget config updated', merged);
     }
     createDOM();
     window.RandomAIWidget = {init: init, open: openPanel, close: closePanel, _inited:true};
     return window.RandomAIWidget;
   }
 
+  function applyConfigToDOM(cfg){
+    try{
+      const titleEl = document.getElementById('ra-title');
+      const inputEl = document.getElementById('ra-input');
+      const body = document.getElementById('ra-body');
+      if(titleEl && cfg.title) titleEl.textContent = cfg.title;
+      if(inputEl && cfg.placeholder) inputEl.placeholder = cfg.placeholder;
+      // If panel empty, update welcome message for first message
+      if(body && body.children.length===0 && cfg.welcome) {
+        // remove any existing welcome then add new
+        // we'll not modify history; just ensure next open shows welcome
+      }
+    }catch(e){console.error(e)}
+  }
+
   // Auto-init with saved config so demo pages just include script
   if(document.readyState === 'complete' || document.readyState === 'interactive') init(); else document.addEventListener('DOMContentLoaded', init);
+
+  // Listen for BroadcastChannel messages (admin saves)
+  try{
+    if(typeof BroadcastChannel !== 'undefined'){
+      const bc = new BroadcastChannel('random-ai-widget');
+      bc.addEventListener('message', (ev)=>{
+        const msg = ev.data || {};
+        if(msg.cfg){
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(msg.cfg));
+          applyConfigToDOM(msg.cfg);
+        }
+        if(msg.token) localStorage.setItem('random-ai-widget-token', msg.token);
+      });
+    }
+  }catch(e){/* ignore */}
+
+  // Also respond to storage events (other tabs)
+  window.addEventListener('storage', (e)=>{
+    if(e.key === STORAGE_KEY && e.newValue){
+      try{ const cfg = JSON.parse(e.newValue); applyConfigToDOM(cfg); }catch(_){}
+    }
+    if(e.key === 'random-ai-widget-token'){
+      // nothing to do in DOM
+    }
+  });
 
   // Expose a small API to allow changing config at runtime
   window.RandomAIWidget = window.RandomAIWidget || {init:init, open:()=>{document.getElementById('ra-panel')?.setAttribute('aria-hidden','false')}};
